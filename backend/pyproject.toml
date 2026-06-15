@@ -10,5 +10,14 @@ dependencies = [
     "pydantic-settings>=2.4.0",
 ]
 
+[project.optional-dependencies]
+test = [
+    "httpx>=0.28.0",
+    "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [tool.uvicorn]
 factory = false

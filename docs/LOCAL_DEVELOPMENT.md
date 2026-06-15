@@ -21,7 +21,7 @@ Real Bedrock invocation is the next milestone. AWS credentials can already be ve
 ## Prerequisites
 
 - Python 3.11 or newer
-- Node.js and npm
+- Node.js and npm. Prefer Node.js 20, 22, or 24+ for the frontend test stack.
 - AWS CLI v2, if testing real AWS access
 - AWS credentials configured through the AWS CLI, SSO, environment variables, or another normal AWS credential provider
 
@@ -56,6 +56,12 @@ Install the backend package and dependencies:
 
 ```bash
 python -m pip install -e ./backend
+```
+
+Install backend test dependencies:
+
+```bash
+python -m pip install -e './backend[test]'
 ```
 
 Run the FastAPI app:
@@ -121,6 +127,62 @@ Verify frontend build:
 ```bash
 cd frontend
 npm run build
+```
+
+Run frontend tests:
+
+```bash
+cd frontend
+npm test
+```
+
+Install the Playwright browser binary once per machine:
+
+```bash
+cd frontend
+npx playwright install chromium
+```
+
+Run browser/UI tests:
+
+```bash
+cd frontend
+npm run test:e2e
+```
+
+The Playwright config reuses local servers on `127.0.0.1:8000` and `127.0.0.1:5173` when they are already running. If they are not running, it starts the FastAPI backend and Vite frontend for the test run.
+
+Run backend tests:
+
+```bash
+cd backend
+.venv/bin/python -m pytest
+```
+
+Run live local API smoke tests against a running backend:
+
+```bash
+scripts/smoke_api.sh
+```
+
+By default, the script targets `http://127.0.0.1:8000`. Override that with `API_BASE_URL` when needed:
+
+```bash
+API_BASE_URL=http://127.0.0.1:8001 scripts/smoke_api.sh
+```
+
+Run Docker Compose backend validation:
+
+```bash
+scripts/smoke_compose_backend.sh
+```
+
+This script builds and starts the Compose `backend` service, waits for `/health`, runs `scripts/smoke_api.sh`, and then stops the Compose stack. It defaults to host port `18000` to avoid collisions with other local services.
+
+Override the host port if needed:
+
+```bash
+BACKEND_HOST_PORT=18001 scripts/smoke_compose_backend.sh
 ```
 
 ## AWS Credential Checks

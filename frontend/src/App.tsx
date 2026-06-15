@@ -10,7 +10,7 @@ type ModelInfo = {
   provider: string;
 };
 
-function App() {
+export function App() {
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [selectedModel, setSelectedModel] = useState("nova-lite");
   const [prompt, setPrompt] = useState("");
@@ -98,4 +98,8 @@ function App() {
   );
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+const rootElement = document.getElementById("root");
+
+if (rootElement) {
+  createRoot(rootElement).render(<App />);
+}
