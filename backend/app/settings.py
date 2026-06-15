@@ -1,6 +1,7 @@
 """Application settings."""
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -14,6 +15,7 @@ class Settings(BaseSettings):
     aws_region: str = "us-west-2"
     bedrock_default_model: str = "amazon.nova-lite-v1:0"
     cors_origins: str = "http://localhost:5173"
+    model_client_mode: Literal["stub", "bedrock"] = "stub"
 
 
 settings = Settings()

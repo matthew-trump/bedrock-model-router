@@ -3,7 +3,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.bedrock_client import BedrockClient
+from app.bedrock_client import ModelClientError, create_model_client
 from app.models import ALLOWED_MODELS, ChatRequest, ChatResponse, ModelInfo, ModelsResponse
 from app.settings import settings
 
@@ -17,7 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-bedrock_client = BedrockClient(region_name=settings.aws_region)
+model_client = create_model_client(
+    mode=settings.model_client_mode,
+    region_name=settings.aws_region,
+)
 
 
 @app.get("/health")
@@ -41,12 +44,16 @@ def chat(request: ChatRequest) -> ChatResponse:
     if model_config is None:
         raise HTTPException(status_code=400, detail="Unsupported model_key")
 
-    message = bedrock_client.chat(
-        model_id=model_config["model_id"],
-        user_text=request.message,
-        temperature=request.temperature,
-        max_tokens=request.max_tokens,
-    )
+    try:
+        message = model_client.chat(
+            model_id=model_config["model_id"],
+            user_text=request.message,
+            temperature=request.temperature,
+            max_tokens=request.max_tokens,
+        )
+    except ModelClientError as error:
+        raise HTTPException(status_code=502, detail=str(error)) from error
+
     return ChatResponse(
         model_key=request.model_key,
         model_id=model_config["model_id"],

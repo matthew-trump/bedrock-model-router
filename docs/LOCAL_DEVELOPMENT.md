@@ -202,7 +202,45 @@ aws bedrock list-foundation-models \
   --output table
 ```
 
-These commands do not prove that a specific model can be invoked. Bedrock model access, model IDs, and IAM permissions still need to be validated when the real `bedrock-runtime` Converse call is implemented.
+These commands do not prove that a specific model can be invoked. Use the Layer 2 Bedrock smoke test below to validate a real model invocation through the local FastAPI app.
+
+## Layer 2 Bedrock Smoke Test
+
+Layer 2 uses the same local app, but switches the backend model client from `stub` to `bedrock`.
+
+Run the Bedrock-mode backend smoke test with an explicit opt-in:
+
+```bash
+RUN_BEDROCK_SMOKE=1 scripts/smoke_bedrock_backend.sh
+```
+
+This starts a temporary backend on `http://127.0.0.1:18001` with:
+
+```text
+MODEL_CLIENT_MODE=bedrock
+```
+
+Then it calls `/api/chat` and fails if the response is still the stub response.
+
+Validated result:
+
+- `MODEL_KEY=nova-lite`
+- `AWS_REGION=us-west-2`
+- Bedrock model ID: `amazon.nova-lite-v1:0`
+- Response returned through `/api/chat`: `Bedrock is working.`
+
+This test requires:
+
+- AWS credentials available to boto3
+- Bedrock access in `AWS_REGION`
+- access to the selected model
+- awareness that the request may incur Bedrock usage charges
+
+Override the model or prompt if needed:
+
+```bash
+RUN_BEDROCK_SMOKE=1 MODEL_KEY=claude-haiku PROMPT='Say hello.' scripts/smoke_bedrock_backend.sh
+```
 
 ## Current Working State
 
@@ -210,11 +248,14 @@ These commands do not prove that a specific model can be invoked. Bedrock model 
 - Frontend dependencies install with npm.
 - `/health` returns healthy JSON.
 - `/api/models` returns the local allowlist.
-- `/api/chat` validates requests and returns a stubbed response.
+- `/api/chat` validates requests and routes to the configured model client.
+- `MODEL_CLIENT_MODE=stub` keeps Layer 1 local testing deterministic and AWS-free.
+- `MODEL_CLIENT_MODE=bedrock` enables real Bedrock Runtime `converse` calls.
 - CORS allows the Vite frontend to call the backend locally.
 - The frontend can select a model, submit a prompt, and display the stubbed response.
 - AWS CLI credentials and Bedrock API reachability can be checked separately from the app.
+- A real Layer 2 Bedrock smoke test has passed through the local app with `nova-lite`.
 
 ## Next Step
 
-Replace the stub in `backend/app/bedrock_client.py` with a real `boto3.client("bedrock-runtime").converse(...)` call, normalize the response text, and handle common AWS errors clearly.
+Improve AWS error handling around credential failures, model access issues, region mismatches, throttling, and malformed Bedrock responses.
