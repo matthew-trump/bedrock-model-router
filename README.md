@@ -39,6 +39,7 @@ bedrock-model-router/
   docs/
     PROJECT_BRIEF.md
     ARCHITECTURE.md
+    LOCAL_DEVELOPMENT.md
     MILESTONES.md
     AWS_DEPLOYMENT_NOTES.md
     BEDROCK_NOTES.md
@@ -82,3 +83,16 @@ bedrock-model-router/
 5. Deploy backend to ECS Fargate.
 6. Optionally deploy frontend through S3 + CloudFront or serve it through the backend.
 7. Add streaming, auth, logging, and RAG later.
+
+## Local development
+
+See `docs/LOCAL_DEVELOPMENT.md` for the repeatable setup path:
+
+- create `.env`
+- create the backend virtual environment
+- install Python and npm dependencies
+- run FastAPI and Vite locally
+- smoke test `/health`, `/api/models`, `/api/chat`, CORS, and the frontend build
+- verify AWS CLI and Bedrock API reachability
+
+The current app runs locally with a stubbed Bedrock response. Real Bedrock invocation is the next milestone.

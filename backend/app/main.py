@@ -1,11 +1,23 @@
-"""FastAPI entry point.
+"""FastAPI entry point."""
 
-Codex should implement this file first.
-"""
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
-from fastapi import FastAPI
+from app.bedrock_client import BedrockClient
+from app.models import ALLOWED_MODELS, ChatRequest, ChatResponse, ModelInfo, ModelsResponse
+from app.settings import settings
 
 app = FastAPI(title="Bedrock Model Router")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[origin.strip() for origin in settings.cors_origins.split(",")],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+bedrock_client = BedrockClient(region_name=settings.aws_region)
 
 
 @app.get("/health")
@@ -13,15 +25,30 @@ def health():
     return {"status": "ok", "service": "bedrock-model-router"}
 
 
-@app.get("/api/models")
-def list_models():
-    # TODO: return allowed model registry from models.py
-    return {"models": []}
+@app.get("/api/models", response_model=ModelsResponse)
+def list_models() -> ModelsResponse:
+    return ModelsResponse(
+        models=[
+            ModelInfo(key=key, **model_config)
+            for key, model_config in ALLOWED_MODELS.items()
+        ]
+    )
 
 
-@app.post("/api/chat")
-def chat():
-    # TODO: validate request, call BedrockClient, return normalized response
-    return {
-        "message": "Stub response. Implement Bedrock integration in backend/app/bedrock_client.py."
-    }
+@app.post("/api/chat", response_model=ChatResponse)
+def chat(request: ChatRequest) -> ChatResponse:
+    model_config = ALLOWED_MODELS.get(request.model_key)
+    if model_config is None:
+        raise HTTPException(status_code=400, detail="Unsupported model_key")
+
+    message = bedrock_client.chat(
+        model_id=model_config["model_id"],
+        user_text=request.message,
+        temperature=request.temperature,
+        max_tokens=request.max_tokens,
+    )
+    return ChatResponse(
+        model_key=request.model_key,
+        model_id=model_config["model_id"],
+        message=message,
+    )

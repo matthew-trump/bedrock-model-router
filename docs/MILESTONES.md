@@ -4,18 +4,22 @@
 
 Deliver:
 
-- `GET /health`
-- `GET /api/models`
-- `POST /api/chat`
-- local stub response if Bedrock is not configured
+- [x] `GET /health`
+- [x] `GET /api/models`
+- [x] `POST /api/chat`
+- [x] local stub response if Bedrock is not configured
+- [x] Pydantic request and response models
+- [x] local CORS for the Vite frontend
 
 Success:
 
 ```bash
-curl http://localhost:8000/health
+curl http://127.0.0.1:8000/health
 ```
 
 returns healthy JSON.
+
+Status: working locally with stubbed Bedrock responses.
 
 ## Milestone 2: Real Bedrock call
 
@@ -34,14 +38,18 @@ A local prompt returns a real model response from Bedrock.
 
 Deliver:
 
-- simple chat UI
-- model selector
-- prompt input
-- response panel
+- [x] simple chat UI
+- [x] model selector
+- [x] prompt input
+- [x] response panel
+- [x] loading and error states
+- [x] TypeScript/Vite build config
 
 Success:
 
 User can chat with selected model from browser.
+
+Status: working locally against the stubbed backend.
 
 ## Milestone 4: Docker
 

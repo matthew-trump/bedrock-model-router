@@ -1,6 +1,10 @@
 """Application settings."""
 
+from pathlib import Path
+
 from pydantic_settings import BaseSettings
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):
@@ -10,7 +14,7 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173"
 
     class Config:
-        env_file = ".env"
+        env_file = REPO_ROOT / ".env"
 
 
 settings = Settings()
