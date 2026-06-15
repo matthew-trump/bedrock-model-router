@@ -12,9 +12,9 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: ".venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000",
+      command: ".venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 18000",
       cwd: "../backend",
-      url: "http://127.0.0.1:8000/health",
+      url: "http://127.0.0.1:18000/health",
       reuseExistingServer: true,
       timeout: 10_000,
     },

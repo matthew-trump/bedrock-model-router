@@ -7,7 +7,7 @@ React/Vite frontend on localhost:5173
         |
         | HTTP
         v
-FastAPI backend on localhost:8000
+FastAPI backend on localhost:18000
         |
         | boto3 / AWS SDK
         v

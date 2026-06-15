@@ -25,10 +25,10 @@ Run the live local API smoke test with:
 scripts/smoke_api.sh
 ```
 
-The script defaults to `http://127.0.0.1:8000`. Override the target backend with:
+The script defaults to `http://127.0.0.1:18000`. Override the target backend with:
 
 ```bash
-API_BASE_URL=http://127.0.0.1:8001 scripts/smoke_api.sh
+API_BASE_URL=http://127.0.0.1:18001 scripts/smoke_api.sh
 ```
 
 ## Remaining

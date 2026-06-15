@@ -122,7 +122,7 @@ DynamoDB access should be abstracted behind a repository or service layer.
 Local tests should configure the DynamoDB client with:
 
 ```text
-endpoint_url=http://localhost:8000
+endpoint_url=http://localhost:18002
 ```
 
 Deployed environments should omit `endpoint_url` and use real AWS DynamoDB resources provisioned by Terraform.

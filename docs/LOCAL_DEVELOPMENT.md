@@ -9,14 +9,14 @@ React/Vite frontend on 127.0.0.1:5173
         |
         | HTTP
         v
-FastAPI backend on 127.0.0.1:8000
+FastAPI backend on 127.0.0.1:18000
         |
         | stubbed BedrockClient.chat()
         v
 fake model response
 ```
 
-Real Bedrock invocation is the next milestone. AWS credentials can already be verified locally, but `backend/app/bedrock_client.py` still needs a `boto3` Converse implementation before prompts call Bedrock.
+Real Bedrock invocation is available as an explicit Layer 2 mode. The default local mode remains stubbed so Layer 1 testing stays deterministic, fast, and AWS-free.
 
 ## Prerequisites
 
@@ -68,7 +68,7 @@ Run the FastAPI app:
 
 ```bash
 cd backend
-.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 18000
 ```
 
 ## Frontend Setup
@@ -97,7 +97,7 @@ http://127.0.0.1:5173
 From another terminal, verify the backend:
 
 ```bash
-curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:18000/health
 ```
 
 Expected response:
@@ -109,13 +109,13 @@ Expected response:
 Verify the model registry:
 
 ```bash
-curl http://127.0.0.1:8000/api/models
+curl http://127.0.0.1:18000/api/models
 ```
 
 Verify stubbed chat:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/api/chat \
+curl -X POST http://127.0.0.1:18000/api/chat \
   -H 'Content-Type: application/json' \
   -d '{"model_key":"nova-lite","message":"hello from local test"}'
 ```
@@ -150,7 +150,7 @@ cd frontend
 npm run test:e2e
 ```
 
-The Playwright config reuses local servers on `127.0.0.1:8000` and `127.0.0.1:5173` when they are already running. If they are not running, it starts the FastAPI backend and Vite frontend for the test run.
+The Playwright config reuses local servers on `127.0.0.1:18000` and `127.0.0.1:5173` when they are already running. If they are not running, it starts the FastAPI backend and Vite frontend for the test run.
 
 Run backend tests:
 
@@ -165,10 +165,10 @@ Run live local API smoke tests against a running backend:
 scripts/smoke_api.sh
 ```
 
-By default, the script targets `http://127.0.0.1:8000`. Override that with `API_BASE_URL` when needed:
+By default, the script targets `http://127.0.0.1:18000`. Override that with `API_BASE_URL` when needed:
 
 ```bash
-API_BASE_URL=http://127.0.0.1:8001 scripts/smoke_api.sh
+API_BASE_URL=http://127.0.0.1:18001 scripts/smoke_api.sh
 ```
 
 Run Docker Compose backend validation:

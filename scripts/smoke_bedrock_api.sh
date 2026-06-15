@@ -7,7 +7,7 @@ if [[ "${RUN_BEDROCK_SMOKE:-}" != "1" ]]; then
   exit 2
 fi
 
-API_BASE_URL="${API_BASE_URL:-http://127.0.0.1:8000}"
+API_BASE_URL="${API_BASE_URL:-http://127.0.0.1:18000}"
 MODEL_KEY="${MODEL_KEY:-nova-lite}"
 PROMPT="${PROMPT:-Reply with one short sentence confirming Bedrock is working.}"
 

@@ -44,7 +44,7 @@ describe("App", () => {
 
     expect(await screen.findByRole("option", { name: "Amazon Nova Lite (Amazon)" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Claude 3.5 Haiku (Anthropic)" })).toBeInTheDocument();
-    expect(fetch).toHaveBeenCalledWith("http://localhost:8000/api/models");
+    expect(fetch).toHaveBeenCalledWith("http://127.0.0.1:18000/api/models");
   });
 
   it("submits a prompt and renders the model response", async () => {
@@ -76,7 +76,7 @@ describe("App", () => {
 
     expect(await screen.findByText("Stub Bedrock response")).toBeInTheDocument();
 
-    expect(fetch).toHaveBeenLastCalledWith("http://localhost:8000/api/chat", {
+    expect(fetch).toHaveBeenLastCalledWith("http://127.0.0.1:18000/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ model_key: "claude-haiku", message: "hello" }),
